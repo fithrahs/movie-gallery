@@ -4,7 +4,7 @@ import { IoMdInformationCircleOutline } from "react-icons/io";
 export default function Hero() {
   const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   return (
-    <div id="hero" className="hero relative h-[75vh]">
+    <div id="hero" className="hero relative h-[75vh] hidden md:block mt-14">
       <Image
         src="https://image.tmdb.org/t/p/original/it7yPSgca2VEJyXAqgjfaccgvJm.jpg"
         alt="mockup"

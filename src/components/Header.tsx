@@ -1,16 +1,17 @@
+import CustomDropdown from '@/components/CustomDropdown';
 import Link from 'next/link';
 
 export default function Header() {
   return (
       <header>
-        <nav className="bg-gray-900 border-gray-200 px-10 py-2.5 z-10">
-          <div className="flex flex-wrap justify-between items-center">
+        <nav className="bg-gray-900 border-gray-200 px-10 py-2.5 z-20 fixed top-0 w-full">
+          <div className="flex flex-wrap flex-col md:flex-row justify-between items-center">
             <Link href="/" className="flex items-center">
               <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
                 Movie
               </span>
             </Link>
-            <div className="flex items-center lg:order-2">
+            <div className="flex items-center my-5 md:my-0 w-56">
               <form>
                   <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
                   <div className="relative">
@@ -23,6 +24,7 @@ export default function Header() {
                   </div>
               </form>
             </div>
+            <CustomDropdown />
           </div>
         </nav>
       </header>

@@ -14,10 +14,10 @@ export default function Home() {
     release: '2023-06-14'
   }
   return (
-    <div className='bg-gray-900 pb-32 overflow-y-hidden'>
+    <div className='bg-gray-900 pb-32 overflow-y-hidden relative'>
       <Header />
       <Hero />
-      <div className="content grid grid-cols-5 gap-20 px-10 py-2.5 mt-10">
+      <div className="content grid grid-cols-1 gap-20 px-10 py-2.5 mt-48 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 md:mt-10">
         {data.map(() => (
           <Card key={1} image={cardData.image} title={cardData.title} rating={cardData.rating} release={cardData.release} />
         ))}
