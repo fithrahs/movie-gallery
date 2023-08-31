@@ -1,5 +1,4 @@
 "use client";
-// import Card from "@/components/Card";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Loading from '@/components/Loading';
@@ -10,11 +9,16 @@ import { mapYear } from '@/utils/index';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from "react";
 
+interface IHomeProps {
+  defaultMovies: IMovieTopRatedResult[]
+}
+
 // lazyLoad component
 const Card = dynamic(() => import('@/components/Card'), { ssr: false, loading: () => <p>Loading...</p>, })
 
-export default function Home() {
-  const [movies, setMovies] = useState<IMovieTopRatedResult[]>([]);
+export default function Home({defaultMovies}: IHomeProps) {
+  console.log(defaultMovies)
+  const [movies, setMovies] = useState<IMovieTopRatedResult[]>(defaultMovies);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [search, setSearch] = useState<string>('')
   const [selectedYear, setSelectedYear] = useState<string>('');
@@ -22,13 +26,15 @@ export default function Home() {
   const [page, setPage] = useState<number>(1)
 
   const getMovieTopRated = async () => {
-    setIsLoading(true);
-    await GET(DEFAULT_API_CONFIG.getMovieTopRated, {page: page.toString()})
-      .then((res) => {
-        setMovies(movies => page === 1 ? res.res.results : [...movies, ...res.res.results] );
-        setIsLoading(false)
-      })
-      .catch((err) => setIsLoading(false));
+    if (page > 1) {
+      setIsLoading(true);
+      await GET(DEFAULT_API_CONFIG.getMovieTopRated, {page: page.toString()})
+        .then((res) => {
+          setMovies(movies => page === 1 ? res.res.results : [...movies, ...res.res.results] );
+          setIsLoading(false)
+        })
+        .catch((err) => setIsLoading(false));
+    }
   };
 
   const getSearchKeyword = async () => {
@@ -38,10 +44,6 @@ export default function Home() {
       })
       .catch((err) => console.log(err));
   };
-
-  useEffect(() => {
-    getMovieTopRated();
-  }, []);
 
   useEffect(() => {
     const getSearchMovie =  async () => {

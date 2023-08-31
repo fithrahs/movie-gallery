@@ -1,6 +1,14 @@
 import Loading from '@/components/Loading';
-import { Metadata } from 'next';
+import { IMovieTopRated, IMovieTopRatedResult } from '@/interfaces/index';
+import { GET } from '@/services/api/api';
+import { DEFAULT_API_CONFIG } from '@/services/api/url-api';
+import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
+import Head from 'next/head';
+
+interface IHomeProps {
+  movies: IMovieTopRatedResult[]
+}
 
 // lazyLoad component
 const LazyLoadHomeComponent = dynamic(() => import('@/components/HomeServerComponent'), {
@@ -12,12 +20,26 @@ const LazyLoadHomeComponent = dynamic(() => import('@/components/HomeServerCompo
   </div>,
 })
 
-export const metadata: Metadata = {
-  title: 'Browser - Movie Gallery',
+export default function Home({movies}: IHomeProps) {
+  return (
+    <>
+      <Head>
+        <title>Browser - Movie Gallery</title>
+        <meta name="description" content="This website is for experimental purposes only."></meta>
+      </Head>
+      <LazyLoadHomeComponent defaultMovies={movies} />
+    </>
+  );
 }
 
-export default function Home() {
-  return (
-    <LazyLoadHomeComponent />
-  );
+// implement SSR for SEO Frendly
+export const getServerSideProps: GetServerSideProps<{
+  movies: IMovieTopRated[]
+}> = async () => {
+  const movies = await GET(DEFAULT_API_CONFIG.getMovieTopRated)
+      .then((res) => {
+        return res.res.results
+      })
+      .catch((err) => console.log(err));
+  return { props: { movies } }
 }
