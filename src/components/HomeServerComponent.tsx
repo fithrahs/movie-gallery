@@ -26,16 +26,14 @@ export default function Home({defaultMovies}: IHomeProps) {
 
   // this function for hit movie top rated api and set to variable movies
   const getMovieTopRated = async () => {
-    if (page > 1) {
-      setIsLoading(true);
-      await GET(DEFAULT_API_CONFIG.getMovieTopRated, {page: page.toString()})
-        .then((res) => {
-          // make sure that the page is 1 and set the data the page is more than 1, I copy the data and add other data to it so that the first data is not lost
-          setMovies(movies => page === 1 ? res.res.results : [...movies, ...res.res.results] );
-          setIsLoading(false)
-        })
-        .catch((err) => setIsLoading(false));
-    }
+    setIsLoading(true);
+    await GET(DEFAULT_API_CONFIG.getMovieTopRated, {page: page.toString()})
+      .then((res) => {
+        // make sure that the page is 1 and set the data the page is more than 1, I copy the data and add other data to it so that the first data is not lost
+        setMovies(movies => page === 1 ? res.res.results : [...movies, ...res.res.results] );
+        setIsLoading(false)
+      })
+      .catch((err) => setIsLoading(false));
   };
 
   // this function for hit search keyword api for the value of autocomplete.
