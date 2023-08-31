@@ -1,7 +1,23 @@
 import CustomDropdown from '@/components/CustomDropdown';
 import Link from 'next/link';
 
-export default function Header() {
+interface IHeader {
+  setSearch:(payload: string) => void,
+}
+
+export default function Header({setSearch}: IHeader) {
+  let filterTimeout: any;
+  const debounce = (value: string) => {
+    clearTimeout(filterTimeout);
+    
+    filterTimeout = setTimeout(() => {
+      setSearch(value)
+    }, 500)
+  }
+
+  const handleChangeValue = (payload: string) => {
+    debounce(payload)
+  }
   return (
       <header>
         <nav className="bg-gray-900 border-gray-200 px-10 py-2.5 z-20 fixed top-0 w-full">
@@ -20,7 +36,7 @@ export default function Header() {
                               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                           </svg>
                       </div>
-                      <input type="search" id="default-search" className="block w-full p-2 pl-10 text-sm text-white border border-gray-300 rounded-lg bg-gray-700" placeholder="Search" />
+                      <input type="search" id="default-search" className="block w-full p-2 pl-10 text-sm text-white border border-gray-300 rounded-lg bg-gray-700" placeholder="Search" onChange={(e) => handleChangeValue(e.target.value)} />
                   </div>
               </form>
             </div>

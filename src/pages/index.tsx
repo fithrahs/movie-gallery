@@ -3,7 +3,7 @@ import Card from "@/components/Card";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Loading from '@/components/Loading';
-import { IMovieTopRatedResult } from '@/interfaces/index';
+import { IMovieTopRatedResult } from "@/interfaces/index";
 import { GET } from "@/services/api/api";
 import { DEFAULT_API_CONFIG } from "@/services/api/url-api";
 
@@ -12,25 +12,42 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const [movies, setMovies] = useState<IMovieTopRatedResult[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>('')
 
+  const getMovieTopRated = async () => {
+    setIsLoading(true);
+    await GET(DEFAULT_API_CONFIG.getMovieTopRated)
+      .then((res) => {
+        setMovies(res.res.results);
+        setIsLoading(false)
+      })
+      .catch((err) => setIsLoading(false));
+  };
   useEffect(() => {
-    const getMovieTopRated = async () => {
-      setIsLoading(true);
-      await GET(DEFAULT_API_CONFIG.getMovieTopRated)
-        .then((res) => {
-          setMovies(res.res.results);
-          setIsLoading(false)
-        })
-        .catch((err) => setIsLoading(false));
-    };
     getMovieTopRated();
   }, []);
 
+  useEffect(() => {
+    const getSearchMovie =  async () => {
+      setIsLoading(true);
+      await GET(DEFAULT_API_CONFIG.getSearchMovie, {query: search}).then((res) => {
+        setMovies(res.res.results);
+        setIsLoading(false)
+      })
+      .catch((err) => setIsLoading(false));
+    }
+    if(search) {
+      getSearchMovie()
+    } else {
+      getMovieTopRated()
+    }
+  }, [search])
+
   return (
     <div className="bg-gray-900 pb-32 overflow-y-hidden relative">
-      <Header />
+      <Header setSearch={(payload: string) => setSearch(payload)} />
       <Hero />
-      {isLoading ? (
+      {isLoading && movies.length === 0 ? (
         <div className="mt-48">
           <Loading />
         </div>
