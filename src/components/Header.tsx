@@ -20,6 +20,7 @@ export default function Header({
   const [searchValue, setSearchValue] = useState<string>('')
   const [isShowAutoComplete, setIsShowAutoComplete] = useState<boolean>(false)
 
+  // setup debounce
   let filterTimeout: any;
   const debounce = (value: string) => {
     clearTimeout(filterTimeout);
@@ -29,9 +30,10 @@ export default function Header({
     }, 500);
   };
   
+  // this function for change search the value and set show auto complete (for showing the auto complete)
   const handleChangeValue = (payload: string) => {
     setIsShowAutoComplete(true)
-    setSearchValue (payload)
+    setSearchValue(payload)
     debounce(payload);
   };
   

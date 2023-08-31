@@ -17,7 +17,6 @@ interface IHomeProps {
 const Card = dynamic(() => import('@/components/Card'), { ssr: false, loading: () => <p>Loading...</p>, })
 
 export default function Home({defaultMovies}: IHomeProps) {
-  console.log(defaultMovies)
   const [movies, setMovies] = useState<IMovieTopRatedResult[]>(defaultMovies);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [search, setSearch] = useState<string>('')
@@ -25,11 +24,13 @@ export default function Home({defaultMovies}: IHomeProps) {
   const [keywordList, setKeywordList] = useState<ISearchKeyword[]>([])
   const [page, setPage] = useState<number>(1)
 
+  // this function for hit movie top rated api and set to variable movies
   const getMovieTopRated = async () => {
     if (page > 1) {
       setIsLoading(true);
       await GET(DEFAULT_API_CONFIG.getMovieTopRated, {page: page.toString()})
         .then((res) => {
+          // make sure that the page is 1 and set the data the page is more than 1, I copy the data and add other data to it so that the first data is not lost
           setMovies(movies => page === 1 ? res.res.results : [...movies, ...res.res.results] );
           setIsLoading(false)
         })
@@ -37,6 +38,7 @@ export default function Home({defaultMovies}: IHomeProps) {
     }
   };
 
+  // this function for hit search keyword api for the value of autocomplete.
   const getSearchKeyword = async () => {
     await GET(DEFAULT_API_CONFIG.getSearchKeyword, {query: search})
       .then((res) => {
@@ -45,6 +47,7 @@ export default function Home({defaultMovies}: IHomeProps) {
       .catch((err) => console.log(err));
   };
 
+  // this function for handle if user try to search
   useEffect(() => {
     const getSearchMovie =  async () => {
       setIsLoading(true);
@@ -69,11 +72,14 @@ export default function Home({defaultMovies}: IHomeProps) {
 
   // infinite scroll
   const handleScroll = () => {
+    // Check if the user is already at the bottom of the page
     if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 100) {
       setIsLoading(true)
+      // if user already at the bottom of the page i set the page for hit the top rated api
       setPage(page => page + 1);
     }
   };
+  
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     return () => {
@@ -81,6 +87,7 @@ export default function Home({defaultMovies}: IHomeProps) {
     };
   }, []);
 
+  // Mapping all the years in the movies for data dropdown (filter by year)
   const year = mapYear(movies);
 
   return (

@@ -6,10 +6,11 @@ interface IDropdown {
   setSelectedYear:(paylaod:string) => void,
 }
 
+// component ini digunakan untuk membuat dropdown filter by year
+// component ini memerlukan parameter list tahun yang akan di jadikan menu filter
 export default function CustomDropdown({yearList, setSelectedYear}: IDropdown): JSX.Element {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [searchText, setSearchText] = useState<string>("");
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -75,9 +76,6 @@ export default function CustomDropdown({yearList, setSelectedYear}: IDropdown): 
           >
             <div className="overflow-y-auto overflow-x-hidden max-h-52 custom-scrollbar">
               {yearList
-                .filter((el) =>
-                  el.toString().toLowerCase().includes(searchText.toLowerCase())
-                )
                 .map((option) => (
                   <div
                     key={option}
