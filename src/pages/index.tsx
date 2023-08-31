@@ -6,13 +6,14 @@ import Loading from '@/components/Loading';
 import { IMovieTopRatedResult } from "@/interfaces/index";
 import { GET } from "@/services/api/api";
 import { DEFAULT_API_CONFIG } from "@/services/api/url-api";
-
+import { mapYear } from '@/utils/index';
 import { useEffect, useState } from "react";
 
 export default function Home() {
   const [movies, setMovies] = useState<IMovieTopRatedResult[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [search, setSearch] = useState<string>('')
+  const [selectedYear, setSelectedYear] = useState<string>('');
 
   const getMovieTopRated = async () => {
     setIsLoading(true);
@@ -43,17 +44,19 @@ export default function Home() {
     }
   }, [search])
 
+  const year = mapYear(movies);
+
   return (
     <div className="bg-gray-900 pb-32 overflow-y-hidden relative">
-      <Header setSearch={(payload: string) => setSearch(payload)} />
-      <Hero />
+      <Header setSearch={(payload: string) => setSearch(payload)} yearList={year} setSelectedYear={(payload) => setSelectedYear(payload)} />
+      <Hero movie={movies[0]} />
       {isLoading && movies.length === 0 ? (
         <div className="mt-48">
           <Loading />
         </div>
       ) : (
         <div className="content grid grid-cols-1 gap-20 px-10 py-2.5 mt-48 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 md:mt-10">
-          {movies.map((e) => {
+          {movies.filter((e) => e.release_date.toString().includes(selectedYear)).map((e) => {
             return <Card
               key={e.id}
               id={e.id}

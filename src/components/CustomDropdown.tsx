@@ -1,8 +1,12 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
-export default function CustomDropdown(): JSX.Element {
-  const options = ["2019", "2020", "2021", "2022"];
+interface IDropdown {
+  yearList: any[],
+  setSelectedYear:(paylaod:string) => void,
+}
+
+export default function CustomDropdown({yearList, setSelectedYear}: IDropdown): JSX.Element {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>("");
@@ -13,6 +17,11 @@ export default function CustomDropdown(): JSX.Element {
 
   const handleOptionClick = (option: string) => {
     setSelectedOption(option);
+    if (option.toString().toLowerCase().includes('show')) {
+      setSelectedYear('')
+    } else {
+      setSelectedYear(option)
+    }
     setIsOpen(false);
   };
 
@@ -34,6 +43,10 @@ export default function CustomDropdown(): JSX.Element {
     };
   }, []);
 
+  if(yearList[0]?.toString() !== 'Show All') {
+    yearList.unshift('Show All')
+  }
+  
   return (
     <div className="relative inline-block text-left">
       <div ref={selecOptionDDRef}>
@@ -61,15 +74,15 @@ export default function CustomDropdown(): JSX.Element {
             className='origin-top-right absolute right-0 py-3 px-3 mt-2 w-56 rounded-md shadow-lg bg-gray-700 ring-1 ring-black ring-opacity-5 divide-y z-50'
           >
             <div className="overflow-y-auto overflow-x-hidden max-h-52 custom-scrollbar">
-              {options
+              {yearList
                 .filter((el) =>
-                  el.toLowerCase().includes(searchText.toLowerCase())
+                  el.toString().toLowerCase().includes(searchText.toLowerCase())
                 )
                 .map((option) => (
                   <div
                     key={option}
                     className="py-2 px-2 hover:bg-gray-500 cursor-pointer text-sm text-white"
-                    onClick={() => handleOptionClick(option)}
+                    onClick={() => handleOptionClick(option.toString())}
                   >
                     {option}
                   </div>

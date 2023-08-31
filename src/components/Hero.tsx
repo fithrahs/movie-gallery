@@ -1,13 +1,20 @@
+import Loading from '@/components/Loading';
+import { IMovieTopRatedResult } from '@/interfaces/index';
 import Image from "next/image";
+import Link from 'next/link';
 import { IoMdInformationCircleOutline } from "react-icons/io";
 
-export default function Hero() {
-  const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+interface IHeroProps {
+  movie: IMovieTopRatedResult
+}
+
+export default function Hero({movie}: IHeroProps) {
+  if(!movie) return <Loading/>
   return (
     <div id="hero" className="hero relative h-[75vh] hidden md:block mt-14">
       <Image
-        src="https://image.tmdb.org/t/p/original/it7yPSgca2VEJyXAqgjfaccgvJm.jpg"
-        alt="mockup"
+        src={'https://image.tmdb.org/t/p/original/'+movie.backdrop_path}
+        alt={movie.title}
         sizes="100vw"
         fill
         className="object-cover"
@@ -17,20 +24,18 @@ export default function Hero() {
           id="hero-title"
           className="block text-black dark:text-white text-6xl font-bold"
         >
-          Elemental
+          {movie.title}
         </span>
         <span
           id="hero-description"
           className="text-black dark:text-white block"
         >
-          In a city where fire, water, land and air residents live together, a
-          fiery young woman and a go-with-the-flow guy will discover something
-          elemental: how much they have in common.
+          {movie.overview}
         </span>
-        <button className="flex w-56 items-center justify-between gap-2 text-white text-2xl rounded-xl p-2 px-4 bg-gray-400 bg-opacity-70 hover:bg-opacity-40">
+        <Link href={`/${movie.id}`} className="flex w-56 items-center justify-between gap-2 text-white text-2xl rounded-xl p-2 px-4 bg-gray-400 bg-opacity-70 hover:bg-opacity-40">
           <IoMdInformationCircleOutline />
           Selengkapnya
-        </button>
+        </Link>
       </div>
     </div>
   );

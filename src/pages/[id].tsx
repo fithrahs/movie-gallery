@@ -5,6 +5,7 @@ import { imgBaseUrl } from "@/config/index";
 import { IDetailMovie, IMovieTopRatedResult, IProvider } from "@/interfaces/index";
 import { GET } from "@/services/api/api";
 import { DEFAULT_API_CONFIG } from "@/services/api/url-api";
+import { mapYear } from '@/utils/index';
 import Image from "next/image";
 import { useRouter } from 'next/router';
 import { useEffect, useState } from "react";
@@ -14,9 +15,11 @@ export default function Page() {
   const [movie, setMovie] = useState<IDetailMovie>();
   const [providers, setProviders] = useState<IProvider>();
   const [recommendations, setRecommendation] =
-    useState<IMovieTopRatedResult[]>();
+    useState<IMovieTopRatedResult[]>([]);
   const [search, setSearch] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [selectedYear, setSelectedYear] = useState<string>('');
+
   const { id } = router.query;
 
   const getDetailMovie = async () => {
@@ -76,9 +79,11 @@ export default function Page() {
     }
   }, [search])
 
+  const year = mapYear(recommendations);
+
   return (
     <div className="bg-gray-900 pb-32 overflow-y-hidden relative">
-      <Header setSearch={(payload) => setSearch(payload)} />
+      <Header setSearch={(payload: string) => setSearch(payload)} yearList={year} setSelectedYear={(payload) => setSelectedYear(payload)} />
       {!search ? (
         <>
           <div className="flex flex-col mt-48 gap-16 px-10 py-32 bg-gray-700 2xl:px-96 xl:px52 lg:px-40 md:flex-row md:mt-0">
@@ -138,7 +143,7 @@ export default function Page() {
               Similar Movies
             </span>
             <div className="grid grid-cols-1 gap-20 py-2.5 mt-48 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 md:mt-10">
-              {recommendations?.map((e) => {
+              {recommendations?.filter((e) => e.release_date.toString().includes(selectedYear)).map((e) => {
                 return (
                   <Card
                     key={e.id}
@@ -155,7 +160,7 @@ export default function Page() {
         </>
       ) : (
         <div className="grid grid-cols-1 gap-20 py-2.5 mt-48 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 md:mt-20">
-          {recommendations?.map((e) => {
+          {recommendations?.filter((e) => e.release_date.toString().includes(selectedYear)).map((e) => {
             return (
               <Card
                 key={e.id}

@@ -3,9 +3,11 @@ import Link from 'next/link';
 
 interface IHeader {
   setSearch:(payload: string) => void,
+  yearList: number[],
+  setSelectedYear:(paylaod:string) => void,
 }
 
-export default function Header({setSearch}: IHeader) {
+export default function Header({setSearch, yearList, setSelectedYear}: IHeader) {
   let filterTimeout: any;
   const debounce = (value: string) => {
     clearTimeout(filterTimeout);
@@ -40,7 +42,7 @@ export default function Header({setSearch}: IHeader) {
                   </div>
               </form>
             </div>
-            <CustomDropdown />
+            <CustomDropdown yearList={yearList} setSelectedYear={setSelectedYear}/>
           </div>
         </nav>
       </header>
