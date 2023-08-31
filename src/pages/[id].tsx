@@ -82,7 +82,7 @@ export default function Page() {
   const year = mapYear(recommendations);
 
   return (
-    <div className="bg-gray-900 pb-32 overflow-y-hidden relative">
+    <div className="bg-gray-900 pb-32 overflow-y-hidden relative min-h-[100vh]">
       <Header setSearch={(payload: string) => setSearch(payload)} yearList={year} setSelectedYear={(payload) => setSelectedYear(payload)} />
       {!search ? (
         <>
@@ -117,7 +117,7 @@ export default function Page() {
               </span>
               <b>Watch Here: </b>
               <div className="detail-play flex flex-wrap flex-row items-center justify-start gap-5 mt-5">
-                {providers && providers["US"].flatrate
+                {providers && providers["US"]?.flatrate
                   ? providers["US"].flatrate.map((e, i) => (
                       <div
                         className="relative w-24 h-24 hover:cursor-pointer"
