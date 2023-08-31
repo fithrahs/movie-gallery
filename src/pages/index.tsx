@@ -53,15 +53,16 @@ export default function Home() {
         </div>
       ) : (
         <div className="content grid grid-cols-1 gap-20 px-10 py-2.5 mt-48 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 md:mt-10">
-          {movies.map((e) => (
-            <Card
+          {movies.map((e) => {
+            return <Card
               key={e.id}
+              id={e.id}
               image={{ src: e.poster_path, alt: e.title }}
               title={e.title}
               rating={e.vote_average}
               release={e.release_date}
             />
-          ))}
+          })}
         </div>
       )}
     </div>
