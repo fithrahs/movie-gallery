@@ -1,24 +1,30 @@
 "use client";
 import Card from "@/components/Card";
 import Header from "@/components/Header";
+import Loading from "@/components/Loading";
 import { imgBaseUrl } from "@/config/index";
-import { IDetailMovie, IMovieTopRatedResult, IProvider } from "@/interfaces/index";
+import {
+  IDetailMovie,
+  IMovieTopRatedResult,
+  IProvider,
+} from "@/interfaces/index";
 import { GET } from "@/services/api/api";
 import { DEFAULT_API_CONFIG } from "@/services/api/url-api";
-import { mapYear } from '@/utils/index';
+import { mapYear } from "@/utils/index";
 import Image from "next/image";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 export default function Page() {
   const router = useRouter();
   const [movie, setMovie] = useState<IDetailMovie>();
   const [providers, setProviders] = useState<IProvider>();
-  const [recommendations, setRecommendation] =
-    useState<IMovieTopRatedResult[]>([]);
+  const [recommendations, setRecommendation] = useState<IMovieTopRatedResult[]>(
+    []
+  );
   const [search, setSearch] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [selectedYear, setSelectedYear] = useState<string>('');
+  const [selectedYear, setSelectedYear] = useState<string>("");
 
   const { id } = router.query;
 
@@ -34,9 +40,7 @@ export default function Page() {
 
   const getWatchProvider = async () => {
     setIsLoading(true);
-    await GET(
-      `${DEFAULT_API_CONFIG.getDetailMovie}/${id}/watch/providers`
-    )
+    await GET(`${DEFAULT_API_CONFIG.getDetailMovie}/${id}/watch/providers`)
       .then((res) => {
         setProviders(res.res.results);
         setIsLoading(false);
@@ -46,9 +50,7 @@ export default function Page() {
 
   const getRecommendationMovie = async () => {
     setIsLoading(true);
-    await GET(
-      `${DEFAULT_API_CONFIG.getDetailMovie}/${id}/recommendations`
-    )
+    await GET(`${DEFAULT_API_CONFIG.getDetailMovie}/${id}/recommendations`)
       .then((res) => {
         setRecommendation(res.res.results);
         setIsLoading(false);
@@ -63,28 +65,33 @@ export default function Page() {
   }, [id]);
 
   useEffect(() => {
-    const getSearchMovie =  async () => {
+    const getSearchMovie = async () => {
       setIsLoading(true);
-      await GET(DEFAULT_API_CONFIG.getSearchMovie, {query: search}).then((res) => {
-        setRecommendation(res.res.results);
-        setIsLoading(false)
-      })
-      .catch((err) => setIsLoading(false));
-    }
+      await GET(DEFAULT_API_CONFIG.getSearchMovie, { query: search })
+        .then((res) => {
+          setRecommendation(res.res.results);
+          setIsLoading(false);
+        })
+        .catch((err) => setIsLoading(false));
+    };
 
-    if(search) {
+    if (search) {
       getSearchMovie();
     } else {
       getRecommendationMovie();
     }
-  }, [search])
+  }, [search]);
 
   const year = mapYear(recommendations);
 
   return (
     <div className="bg-gray-900 pb-32 overflow-y-hidden relative min-h-[100vh]">
-      <Header setSearch={(payload: string) => setSearch(payload)} yearList={year} setSelectedYear={(payload) => setSelectedYear(payload)} />
-      {!search ? (
+      <Header
+        setSearch={(payload: string) => setSearch(payload)}
+        yearList={year}
+        setSelectedYear={(payload) => setSelectedYear(payload)}
+      />
+      {!search && !isLoading ? (
         <>
           <div className="flex flex-col mt-48 gap-16 px-10 py-32 bg-gray-700 2xl:px-96 xl:px52 lg:px-40 md:flex-row md:mt-0">
             <div className="relative min-w-[300px] min-h-[450px] mx-auto">
@@ -143,35 +150,45 @@ export default function Page() {
               Similar Movies
             </span>
             <div className="grid grid-cols-1 gap-20 py-2.5 mt-48 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 md:mt-10">
-              {recommendations?.filter((e) => e.release_date.toString().includes(selectedYear)).map((e) => {
-                return (
-                  <Card
-                    key={e.id}
-                    id={e.id}
-                    image={{ src: e.poster_path, alt: e.title }}
-                    title={e.title}
-                    rating={e.vote_average}
-                    release={e.release_date}
-                  />
-                );
-              })}
+              {recommendations
+                ?.filter((e) =>
+                  e.release_date.toString().includes(selectedYear)
+                )
+                .map((e) => {
+                  return (
+                    <Card
+                      key={e.id}
+                      id={e.id}
+                      image={{ src: e.poster_path, alt: e.title }}
+                      title={e.title}
+                      rating={e.vote_average}
+                      release={e.release_date}
+                    />
+                  );
+                })}
             </div>
           </div>
         </>
-      ) : (
+      ) : !isLoading ? (
         <div className="grid grid-cols-1 gap-20 py-2.5 mt-48 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 md:mt-20">
-          {recommendations?.filter((e) => e.release_date.toString().includes(selectedYear)).map((e) => {
-            return (
-              <Card
-                key={e.id}
-                id={e.id}
-                image={{ src: e.poster_path, alt: e.title }}
-                title={e.title}
-                rating={e.vote_average}
-                release={e.release_date}
-              />
-            );
-          })}
+          {recommendations
+            ?.filter((e) => e.release_date.toString().includes(selectedYear))
+            .map((e) => {
+              return (
+                <Card
+                  key={e.id}
+                  id={e.id}
+                  image={{ src: e.poster_path, alt: e.title }}
+                  title={e.title}
+                  rating={e.vote_average}
+                  release={e.release_date}
+                />
+              );
+            })}
+        </div>
+      ) : (
+        <div className="mt-48">
+          <Loading />
         </div>
       )}
     </div>
