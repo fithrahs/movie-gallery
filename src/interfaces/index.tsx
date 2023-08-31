@@ -1,3 +1,8 @@
+export interface ISearchKeyword {
+  "id": number,
+  "name": string,
+}
+
 export interface IFlatrate {
   logo_path: string;
   provider_id: number;

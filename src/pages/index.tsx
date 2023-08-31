@@ -3,7 +3,7 @@ import Card from "@/components/Card";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Loading from '@/components/Loading';
-import { IMovieTopRatedResult } from "@/interfaces/index";
+import { IMovieTopRatedResult, ISearchKeyword } from "@/interfaces/index";
 import { GET } from "@/services/api/api";
 import { DEFAULT_API_CONFIG } from "@/services/api/url-api";
 import { mapYear } from '@/utils/index';
@@ -14,6 +14,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [search, setSearch] = useState<string>('')
   const [selectedYear, setSelectedYear] = useState<string>('');
+  const [keywordList, setKeywordList] = useState<ISearchKeyword[]>([])
 
   const getMovieTopRated = async () => {
     setIsLoading(true);
@@ -24,6 +25,15 @@ export default function Home() {
       })
       .catch((err) => setIsLoading(false));
   };
+
+  const getSearchKeyword = async () => {
+    await GET(DEFAULT_API_CONFIG.getSearchKeyword, {query: search})
+      .then((res) => {
+        setKeywordList(res.res.results);
+      })
+      .catch((err) => console.log(err));
+  };
+
   useEffect(() => {
     getMovieTopRated();
   }, []);
@@ -38,8 +48,10 @@ export default function Home() {
       .catch((err) => setIsLoading(false));
     }
     if(search) {
+      getSearchKeyword()
       getSearchMovie()
     } else {
+      setKeywordList([])
       getMovieTopRated()
     }
   }, [search])
@@ -48,7 +60,7 @@ export default function Home() {
 
   return (
     <div className="bg-gray-900 pb-32 overflow-y-hidden relative">
-      <Header setSearch={(payload: string) => setSearch(payload)} yearList={year} setSelectedYear={(payload) => setSelectedYear(payload)} />
+      <Header setSearch={(payload: string) => setSearch(payload)} yearList={year} setSelectedYear={(payload) => setSelectedYear(payload)} searchList={keywordList} />
       <Hero movie={movies[0]} />
       {isLoading && movies.length === 0 ? (
         <div className="mt-48">
