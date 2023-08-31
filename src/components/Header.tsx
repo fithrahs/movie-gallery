@@ -47,7 +47,7 @@ export default function Header({
             </span>
           </Link>
           <div className="flex items-center my-5 md:my-0 w-56 relative">
-            <form>
+            <form autoComplete='off'>
               <label
                 htmlFor="default-search"
                 className="mb-2 text-sm font-medium text-gray-900 sr-only"
