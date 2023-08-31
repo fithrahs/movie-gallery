@@ -1,4 +1,5 @@
 "use client";
+import { imgBaseUrl } from '@/config/index';
 import Image from 'next/image';
 import { useRouter } from "next/navigation";
 import { AiFillStar } from 'react-icons/ai';
@@ -9,7 +10,7 @@ interface ICard{
     alt: string,
   }
   title: string,
-  rating: string,
+  rating: number,
   release: string,
   key: number,
   className?: string,
@@ -19,7 +20,7 @@ export default function Card({image, title, rating, release, key, className}: IC
   const router = useRouter();
   return (
     <div className={`relative w-[256px] h-96 m-auto group hover:scale-105 hover:z-10 hover:cursor-pointer transition-all duration-500 ${className}`} key={key} onClick={() => router.push("/detail/1")}>
-      <Image src={image.src} alt="mockup" sizes="100vw" fill className='object-contain' />
+      <Image src={imgBaseUrl+image.src} alt="mockup" sizes="100vw" fill className='object-contain' />
       <div className="content-desc relative top-full bg-gray-800 p-4 rounded-b-lg invisible group-hover:visible">
         <span id='content-title' className='text-white font-bold'>{title}</span>
         <div className='content-rating text-white flex items-center gap-2'><AiFillStar/>{rating}</div>
